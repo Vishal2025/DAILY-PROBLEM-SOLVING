@@ -1,4 +1,4 @@
-# DAILY-PROBLEM-SOLVING
+
 <H2>
-  Daily problem solving in cpp
+ # DAILY-PROBLEM-SOLVING
 </H2>
