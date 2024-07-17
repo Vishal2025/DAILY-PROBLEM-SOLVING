@@ -1,0 +1,91 @@
+/*
+Given the root of a binary tree, each node in the tree has a distinct value.
+
+After deleting all nodes with a value in to_delete, we are left with a forest (a disjoint union of trees).
+
+Return the roots of the trees in the remaining forest. You may return the result in any order.
+
+ 
+
+Example 1:
+
+
+Input: root = [1,2,3,4,5,6,7], to_delete = [3,5]
+Output: [[1,2,null,4],[6],[7]]
+Example 2:
+
+Input: root = [1,2,4,null,3], to_delete = [3]
+Output: [[1,2,4]]
+ 
+
+Constraints:
+
+The number of nodes in the given tree is at most 1000.
+Each node has a distinct value between 1 and 1000.
+to_delete.length <= 1000
+to_delete contains distinct values between 1 and 1000.
+*/
+
+*********************************************SOLUTION******************************************
+
+class Solution {
+public:
+unordered_map<TreeNode*,TreeNode*>m;
+    vector<TreeNode*>ans;
+    set<TreeNode*>s;
+    vector<TreeNode*>ntd;
+ void findp(TreeNode *root,TreeNode *p,int t,TreeNode *x,vector<TreeNode*>&ntd){
+
+     if(root==NULL) return ;
+
+     if(root->val==t){
+         if(s.find(root)!=s.end()) s.erase(root);
+         if(root->left==NULL && root->right==NULL){
+             if(p->left==root) p->left=NULL;
+             else p->right=NULL;
+        }
+        else{
+
+             m[root]=p;
+             ntd.push_back(root);
+             if(root->left)
+             s.insert(root->left);
+             if(root->right)
+             s.insert(root->right);
+         }
+     }
+
+     findp(root->left,root,t,x,ntd);
+     findp(root->right,root,t,x,ntd);
+ }
+    vector<TreeNode*> delNodes(TreeNode* root, vector<int>& to_delete) {
+        int f=0;
+        for(int i=0;i<to_delete.size();i++){
+            TreeNode *x=NULL;
+            if(to_delete[i]==root->val){
+              f=1;
+             if(root->left)s.insert(root->left);
+             if(root->right)s.insert(root->right);
+             ntd.push_back(root);
+            }
+            else findp(root,NULL,to_delete[i],x,ntd);
+        }
+        
+        for(auto it:m){
+            if(it.second->left==it.first)it.second->left=NULL;
+            else it.second->right=NULL;
+        }
+
+        for(int i=0;i<ntd.size();i++){
+            if(s.find(ntd[i])!=s.end()) s.erase(ntd[i]);
+            ntd[i]->left=NULL;
+            ntd[i]->right=NULL;
+        }
+
+        for(auto it:s)
+            ans.push_back(it);
+        
+       if(f==0) ans.push_back(root);
+        return ans;
+    }
+};
