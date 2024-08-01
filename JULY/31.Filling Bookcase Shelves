@@ -1,0 +1,56 @@
+/*
+You are given an array books where books[i] = [thicknessi, heighti] indicates the thickness and height of the ith book. You are also given an integer shelfWidth.
+
+We want to place these books in order onto bookcase shelves that have a total width shelfWidth.
+
+We choose some of the books to place on this shelf such that the sum of their thickness is less than or equal to shelfWidth, then build another level of the shelf of the bookcase so that the total height of the bookcase has increased by the maximum height of the books we just put down. We repeat this process until there are no more books to place.
+
+Note that at each step of the above process, the order of the books we place is the same order as the given sequence of books.
+
+For example, if we have an ordered list of 5 books, we might place the first and second book onto the first shelf, the third book on the second shelf, and the fourth and fifth book on the last shelf.
+Return the minimum possible height that the total bookshelf can be after placing shelves in this manner.
+
+ 
+
+Example 1:
+
+
+Input: books = [[1,1],[2,3],[2,3],[1,1],[1,1],[1,1],[1,2]], shelfWidth = 4
+Output: 6
+Explanation:
+The sum of the heights of the 3 shelves is 1 + 3 + 2 = 6.
+Notice that book number 2 does not have to be on the first shelf.
+Example 2:
+
+Input: books = [[1,3],[2,4],[3,2]], shelfWidth = 6
+Output: 4
+ 
+
+Constraints:
+
+1 <= books.length <= 1000
+1 <= thicknessi <= shelfWidth <= 1000
+1 <= heighti <= 1000
+*/
+
+class Solution {
+public:
+int solve(int i,int w,int wid,int hei,vector<vector<int>>&books,vector<vector<int>>&dp){
+    int n=books.size();
+    if(i==n){
+        return hei;
+    }
+    if(dp[i][w]!=-1)return dp[i][w];
+    // take
+    int a=INT_MAX;
+    if(w+books[i][0]<=wid){
+        a=solve(i+1,w+books[i][0],wid,max(hei,books[i][1]),books,dp);
+    }
+    int b=hei+solve(i+1,books[i][0],wid,books[i][1],books,dp);
+    return dp[i][w]= min(a,b);
+}
+    int minHeightShelves(vector<vector<int>>& books, int wid) {
+        vector<vector<int>>dp(1001,vector<int>(1001,-1));
+        return solve(0,0,wid,0,books,dp);
+    }
+};
